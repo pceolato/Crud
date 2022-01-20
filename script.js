@@ -11,7 +11,7 @@ const Modal = {
         } 
     }
 
-
+    
 document.getElementById('cadastrarCliente')
     .addEventListener('click', Modal.openModal)
 

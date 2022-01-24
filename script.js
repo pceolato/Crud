@@ -6,27 +6,73 @@ const Modal = {
     .classList.add('active')
     },
     closeModal() {
+        clearFields()
         document.getElementById('modal')
         .classList.remove('active')
         } 
     }
 
+const getStorage = () =>  JSON.parse(localStorage.getItem('db_client')) ?? []   
+const setStorage = (dbClient) => localStorage.setItem("db_client", JSON.stringify(dbClient))
+
 const tempClient = {
-    nome:"Pedrinho",
-    email:"pc@gmail.com",
-    celular:"1198766543",
-    cidade:"São Paulo"
+    nome: "Pedro",
+    email: "pc@gmail.com",
+    celular: "1198766543",
+    cidade: "São Paulo"
 }
+
 // Crud - Create read update delete
 
-const createClient = (client) => {
-    const db_client = JSON.parse(localStorage.getItem('db_client'))
-    console.log(db_client)
-    db_client.push(client)
-    localStorage.setItem("db_client", JSON.stringify(db_client))
+const deleteClient = (index) => {
+    let dbClient = readClient()
+    dbClient.splice(index, 1)
+    setStorage(dbClient)
 }
 
+//crud - UPDATE
+const updateClient = (index, client) => {
+    let dbClient = readClient()
+    dbClient[index] = client
+    setLocalStorange(dbClient)
+}
 
+// Crud - READ
+const readClient = () => getStorage()
+
+// Crud - CREATE
+const createClient = (client) => {
+    const dbClient = getStorage()
+    dbClient.push(client)
+    setStorage(dbClient)
+}   
+
+const isValidFields = () => {
+    return document.getElementById('form').reportValidity()
+}
+
+//interação com o layout
+
+const clearFields = () => {
+    const fields = document.querySelectorAll('.modal-field')
+    fields.forEach(field => field.value = "")
+}
+
+const saveClient = () => {
+    if (isValidFields()) {
+        let client = {
+            nome: document.getElementById('nome').value,
+            email: document.getElementById('email').value,
+            celular: document.getElementById('celular').value,
+            cidade: document.getElementById('cidade').value,
+
+        }
+        createClient(client)
+        Modal.closeModal()
+    }
+}
+
+//eventos
 document.getElementById('cadastrarCliente')
     .addEventListener('click', Modal.openModal)
 
@@ -36,4 +82,6 @@ document.getElementById('modalClose')
 document.getElementById('cancelar')
     .addEventListener('click', Modal.closeModal)
 
+document.getElementById('salvar')
+    .addEventListener('click', saveClient)
 

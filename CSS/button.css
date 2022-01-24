@@ -11,14 +11,17 @@
 
 .button.blue {
     background-color: #1fb6ff;
+    border-radius: 2px;
 }
 
 button.green {
     background-color: #13ce66;
+    border-radius: 2px;
 }
 
 button.red {
     background-color: #ff4949;
+    border-radius: 2px;
 }
 
 .button:hover {

@@ -25,14 +25,14 @@ const tempClient = {
 // Crud - Create read update delete
 
 const deleteClient = (index) => {
-    let dbClient = readClient()
+    const dbClient = readClient()
     dbClient.splice(index, 1)
     setStorage(dbClient)
 }
 
 //crud - UPDATE
 const updateClient = (index, client) => {
-    let dbClient = readClient()
+    const dbClient = readClient()
     dbClient[index] = client
     setLocalStorange(dbClient)
 }
@@ -60,7 +60,7 @@ const clearFields = () => {
 
 const saveClient = () => {
     if (isValidFields()) {
-        let client = {
+        const client = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value,
             celular: document.getElementById('celular').value,
@@ -71,6 +71,27 @@ const saveClient = () => {
         Modal.closeModal()
     }
 }
+
+const creatRow = (client) => {
+    const newRow = document.createElement('tr')
+    newRow.innerHTML = `
+    <td>${client.nome}</td>
+    <td>${client.email}</td>
+    <td>${client.celular}</td>
+    <td>${client.cidade}</td>
+    <td>
+        <button type="button" class="button green">Editar</button>
+        <button type="button" class="button red">Excluir</button> 
+    </td>`
+    document.querySelector('#tableClient>tbody').appendChild(newRow)
+}
+
+const updateTable = () => {
+    const dbClient = readClient()
+    dbClient.forEach(creatRow)
+}
+
+updateTable ()
 
 //eventos
 document.getElementById('cadastrarCliente')

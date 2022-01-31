@@ -12,18 +12,12 @@ const Modal = {
         } 
     }
 
+//pegar e definir documento
 const getStorage = () =>  JSON.parse(localStorage.getItem('db_client')) ?? []   
 const setStorage = (dbClient) => localStorage.setItem("db_client", JSON.stringify(dbClient))
 
-const tempClient = {
-    nome: "Pedro",
-    email: "pc@gmail.com",
-    celular: "1198766543",
-    cidade: "São Paulo"
-}
-
 // Crud - Create read update delete
-
+// Crud - DELETE
 const deleteClient = (index) => {
     const dbClient = readClient()
     dbClient.splice(index, 1)
@@ -34,7 +28,7 @@ const deleteClient = (index) => {
 const updateClient = (index, client) => {
     const dbClient = readClient()
     dbClient[index] = client
-    setLocalStorange(dbClient)
+    setStorage(dbClient)
 }
 
 // Crud - READ
@@ -52,12 +46,12 @@ const isValidFields = () => {
 }
 
 //interação com o layout
-
 const clearFields = () => {
     const fields = document.querySelectorAll('.modal-field')
     fields.forEach(field => field.value = "")
 }
 
+//salvar cliente
 const saveClient = () => {
     if (isValidFields()) {
         const client = {
@@ -67,12 +61,21 @@ const saveClient = () => {
             cidade: document.getElementById('cidade').value,
 
         }
-        createClient(client)
-        Modal.closeModal()
+        const index = document.getElementById('nome').dataset.index
+        if (index == 'new') {
+            createClient(client)
+            updateTable()
+            Modal.closeModal()
+        } else {
+            updateClient(index, client)
+            updateTable()
+            Modal.closeModal()
+        }   
     }
 }
 
-const creatRow = (client) => {
+//criar as linhas da tabela
+const creatRow = (client, index) => {
     const newRow = document.createElement('tr')
     newRow.innerHTML = `
     <td>${client.nome}</td>
@@ -80,18 +83,63 @@ const creatRow = (client) => {
     <td>${client.celular}</td>
     <td>${client.cidade}</td>
     <td>
-        <button type="button" class="button green">Editar</button>
-        <button type="button" class="button red">Excluir</button> 
+        <button type="button" class="button green" id="edit-${index}" >Editar</button>
+        <button type="button" class="button red" id="delete-${index}" >Excluir</button> 
     </td>`
     document.querySelector('#tableClient>tbody').appendChild(newRow)
 }
 
+
+//limpar as linhas para o update de uma nova
+const clearTable = () => {
+    const rows = document.querySelectorAll('#tableClient>tbody tr')
+    rows.forEach(row => row.parentNode.removeChild(row))
+}
+
+//criar linha com dados
 const updateTable = () => {
     const dbClient = readClient()
+    clearTable()
     dbClient.forEach(creatRow)
 }
 
-updateTable ()
+//prencher os campos
+const fillFields = (client) => {  
+    document.getElementById('nome').value = client.nome
+    document.getElementById('email').value = client.email
+    document.getElementById('celular').value = client.celular
+    document.getElementById('cidade').value = client.cidade
+    document.getElementById('nome').dataset.index = client.index
+}
+
+//abrir modal para editar
+const editClient = (index) => {
+    const client = readClient()[index]
+    client.index = index
+    fillFields(client)
+    Modal.openModal()
+}
+
+//editar e deletar cliente
+const editDelete = (event) => {
+    if (event.target.type == 'button') {
+
+        const [action, index] = event.target.id.split('-')
+
+        if (action == 'edit') {
+            editClient(index)
+        } else {
+            const client = readClient()[index]
+            const response = confirm(`Deseja realmente excluir o(a) cliente ${client.nome}`)
+            if (response) {
+            deleteClient(index)
+            updateTable()
+            }
+        }
+    } 
+}
+
+updateTable()
 
 //eventos
 document.getElementById('cadastrarCliente')
@@ -105,4 +153,5 @@ document.getElementById('cancelar')
 
 document.getElementById('salvar')
     .addEventListener('click', saveClient)
-
+document.querySelector('#tableClient>tbody')
+    .addEventListener('click', editDelete)

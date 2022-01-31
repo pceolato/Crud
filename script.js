@@ -3,17 +3,17 @@
 const Modal = {
     openModal() {
         document.getElementById('modal')
-    .classList.add('active')
+            .classList.add('active')
     },
     closeModal() {
         clearFields()
         document.getElementById('modal')
-        .classList.remove('active')
-        } 
+            .classList.remove('active')
     }
+}
 
 //pegar e definir documento
-const getStorage = () =>  JSON.parse(localStorage.getItem('db_client')) ?? []   
+const getStorage = () => JSON.parse(localStorage.getItem('db_client')) ?? []
 const setStorage = (dbClient) => localStorage.setItem("db_client", JSON.stringify(dbClient))
 
 // Crud - Create read update delete
@@ -39,7 +39,7 @@ const createClient = (client) => {
     const dbClient = getStorage()
     dbClient.push(client)
     setStorage(dbClient)
-}   
+}
 
 const isValidFields = () => {
     return document.getElementById('form').reportValidity()
@@ -70,7 +70,7 @@ const saveClient = () => {
             updateClient(index, client)
             updateTable()
             Modal.closeModal()
-        }   
+        }
     }
 }
 
@@ -104,7 +104,7 @@ const updateTable = () => {
 }
 
 //prencher os campos
-const fillFields = (client) => {  
+const fillFields = (client) => {
     document.getElementById('nome').value = client.nome
     document.getElementById('email').value = client.email
     document.getElementById('celular').value = client.celular
@@ -132,11 +132,11 @@ const editDelete = (event) => {
             const client = readClient()[index]
             const response = confirm(`Deseja realmente excluir o(a) cliente ${client.nome}`) //envia uma mensagem de alerta
             if (response) {
-            deleteClient(index)
-            updateTable()
+                deleteClient(index)
+                updateTable()
             }
         }
-    } 
+    }
 }
 
 updateTable()
@@ -153,5 +153,6 @@ document.getElementById('cancelar')
 
 document.getElementById('salvar')
     .addEventListener('click', saveClient)
+
 document.querySelector('#tableClient>tbody')
     .addEventListener('click', editDelete)
